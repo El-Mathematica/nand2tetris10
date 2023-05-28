@@ -11,7 +11,8 @@ using namespace std;
 
 class JackTokenizer {
     private:
-        ofstream myFile;
+        string currentToken;
+        ifstream myFile;
     public:
         JackTokenizer(string fileName);
         bool hasMoreTokens();
