@@ -1,0 +1,11 @@
+#ifndef ENUM_H
+#define ENUM_H
+
+namespace my_enums {
+    enum tokenType {KEYWORD, SYMBOL, IDENTIFIER, INT_CONST, STRING_CONST};
+    enum keyWord {CLASS, METHOD, FUNCTION, CONSTRUCTOR, INT, BOOLEAN, CHAR, 
+    VOID, VAR, STATIC, FIELD, LET, DO, IF, ELSE, WHILE, RETURN, TRUE, FALSE,
+    NULLSPECIAL, THIS};
+}
+
+#endif
