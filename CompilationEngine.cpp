@@ -27,6 +27,7 @@ void CompilationEngine::CompileClass() {
     }
     outputFile << indents() << "<class>" << endl;
     indentValue++;
+    outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
     tokens->advance();
     if(tokens->tokenType() != my_enums::tokenType::IDENTIFIER) {
         cout << "unexpected input" << endl;
@@ -52,21 +53,13 @@ void CompilationEngine::CompileClass() {
         if(tokens->tokenType() == my_enums::tokenType::KEYWORD) {
 
             if(tokens->keyWord() == my_enums::keyWord::STATIC || tokens->keyWord() == my_enums::keyWord::FIELD) {
-                outputFile << indents() << "<classVarDec>" << endl;
-                indentValue++;
-                outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+
                 CompileClassVarDec();
-                indentValue--;
-                outputFile << indents() << "</classVarDec>" << endl;
-            
+    
             } else if(tokens->keyWord() == my_enums::keyWord::CONSTRUCTOR || tokens->keyWord() == my_enums::keyWord::FUNCTION || tokens->keyWord() == my_enums::keyWord::METHOD) {
                 
-                outputFile << indents() << "<subroutineDec>" << endl;
-                indentValue++;
-                outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
                 CompileSubroutine();
-                indentValue--;
-                outputFile << indents() << "</subroutineDec>" << endl;
+                
             }
         }
 
@@ -89,14 +82,122 @@ void CompilationEngine::CompileClass() {
 }
 
 void CompilationEngine::CompileClassVarDec() {
-    
+    outputFile << indents() << "<classVarDec>" << endl;
+    indentValue++;
+    outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+    tokens->advance();
+    while(tokens->symbol() != ';') {
+        if(tokens->tokenType() == my_enums::tokenType::KEYWORD) {
+            outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+        } else if(tokens->tokenType() == my_enums::tokenType::SYMBOL) {
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        } else {
+            outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+        }
+        tokens->advance();
+        outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+        tokens->advance();
+    }
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+    indentValue--;
+    outputFile << indents() << "</classVarDec>" << endl;
 }
 
 void CompilationEngine::CompileSubroutine() {
+    outputFile << indents() << "<subroutineDec>" << endl;
+    indentValue++;
+    outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+    tokens->advance();
+    if(tokens->tokenType() == my_enums::tokenType::KEYWORD) {
+        outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+    } else {
+        outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+    }
+    tokens->advance();
+    outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+    tokens->advance();
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+    compileParameterList();
+    
+    
+
+    indentValue--;
+    outputFile << indents() << "</subroutineDec>" << endl;
+}
+
+void CompilationEngine::compileParameterList() {
+    outputFile << indents() << "<parameterList>" << endl;
+    indentValue++;
+    tokens->advance();
+    if(tokens->symbol() == ')') {
+        indentValue--;
+        outputFile << indents() << "</parameterList>" << endl;
+        outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        return;
+    }
+    do {
+        if(tokens->symbol() == ',') {
+            tokens->advance();
+        }
+        if(tokens->tokenType() == my_enums::tokenType::KEYWORD) {
+            outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+        } else {
+            outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+        }
+        tokens->advance();
+        outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+        tokens->advance();
+    }
+    while(tokens->symbol() == ',');
+    
+
+    indentValue--;
+    outputFile << indents() << "</parameterList>" << endl;
+
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+}
+
+void CompilationEngine::compileVarDec() {
+
+}
+
+void CompilationEngine::compileStatements() {
+
+}
+
+void CompilationEngine::compileDo() {
+
+}
+
+void CompilationEngine::compileLet() {
+
+}
+
+void CompilationEngine::compileWhile() {
+
+}
+
+void CompilationEngine::compileReturn() {
+
+}
+
+void CompilationEngine::compileIf() {
+
+}
+
+void CompilationEngine::CompileExpression() {
+
+}
+
+void CompilationEngine::CompileTerm() {
+
+}
+
+void CompilationEngine::CompileExpressionList() {
 
 }
 
 string CompilationEngine::indents() {
-    string s(indentValue, '\t');
+    string s(indentValue*2, ' ');
     return s;
 }
