@@ -1,3 +1,8 @@
 <class>
 	<identifier> Main </identifier>
 	<symbol> { </symbol>
+	<subroutineDec>
+		<keyword> function </keyword>
+	</subroutineDec>
+	<symbol> } </symbol>
+</class>

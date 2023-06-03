@@ -20,7 +20,6 @@ CompilationEngine::CompilationEngine(string inputFileName, string outputFileName
 };
 
 void CompilationEngine::CompileClass() {
-    tokens->hasMoreTokens();
     tokens->advance();
     if(tokens->keyWord() != my_enums::keyWord::CLASS) {
         cout << "broken input" << endl;
@@ -28,7 +27,6 @@ void CompilationEngine::CompileClass() {
     }
     outputFile << indents() << "<class>" << endl;
     indentValue++;
-    tokens->hasMoreTokens();
     tokens->advance();
     if(tokens->tokenType() != my_enums::tokenType::IDENTIFIER) {
         cout << "unexpected input" << endl;
@@ -36,7 +34,6 @@ void CompilationEngine::CompileClass() {
     }
     outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
 
-    tokens->hasMoreTokens();
     tokens->advance();
 
     if(tokens->tokenType() != my_enums::tokenType::SYMBOL) {
@@ -46,11 +43,38 @@ void CompilationEngine::CompileClass() {
 
     outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
 
-    CompileClassVarDec();
-    CompileSubroutine();
+    while(tokens->symbol() != '}' && tokens->hasMoreTokens()) {
+    
+        tokens->advance();
+        
+        
 
-    tokens->hasMoreTokens();
-    tokens->advance();
+        if(tokens->tokenType() == my_enums::tokenType::KEYWORD) {
+
+            if(tokens->keyWord() == my_enums::keyWord::STATIC || tokens->keyWord() == my_enums::keyWord::FIELD) {
+                outputFile << indents() << "<classVarDec>" << endl;
+                indentValue++;
+                outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+                CompileClassVarDec();
+                indentValue--;
+                outputFile << indents() << "</classVarDec>" << endl;
+            
+            } else if(tokens->keyWord() == my_enums::keyWord::CONSTRUCTOR || tokens->keyWord() == my_enums::keyWord::FUNCTION || tokens->keyWord() == my_enums::keyWord::METHOD) {
+                
+                outputFile << indents() << "<subroutineDec>" << endl;
+                indentValue++;
+                outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+                CompileSubroutine();
+                indentValue--;
+                outputFile << indents() << "</subroutineDec>" << endl;
+            }
+        }
+
+
+    }
+
+
+
 
     if(tokens->tokenType() != my_enums::tokenType::SYMBOL) {
         cout << "unexpected item" << endl;
@@ -58,6 +82,8 @@ void CompilationEngine::CompileClass() {
     }
 
     outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+
+    indentValue--;
     outputFile << indents() << "</class>" << endl;
         
 }
