@@ -13,12 +13,15 @@ using namespace std;
 class JackTokenizer {
     private:
         string currentToken;
+        string currentLookForwardToken;
         ifstream myFile;
+        ifstream lookForwardFile;
         unordered_map<string, my_enums::keyWord> tokenMap;
     public:
         JackTokenizer(string fileName);
         bool hasMoreTokens();
         void advance();
+        void advancePeek();
         my_enums::tokenType tokenType();
         my_enums::keyWord keyWord();
         string stringKeyWord();

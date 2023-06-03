@@ -5,6 +5,7 @@
 using namespace std;
 
 JackTokenizer::JackTokenizer(string fileName) {
+    
     tokenMap = {{"class", my_enums::keyWord::CLASS}, {"method", my_enums::keyWord::METHOD}, {"function", my_enums::keyWord::FUNCTION}, {"constructor", my_enums::keyWord::CONSTRUCTOR}, {"int", my_enums::keyWord::INT}, {"boolean", my_enums::keyWord::BOOLEAN}, {"char", my_enums::keyWord::CHAR}, {"void", my_enums::keyWord::VOID}, {"var", my_enums::VAR}, {"static", my_enums::STATIC}, {"field", my_enums::FIELD}, {"let", my_enums::LET}, {"do", my_enums::DO}, {"if", my_enums::IF}, {"else", my_enums::ELSE}, {"while", my_enums::WHILE}, {"return", my_enums::RETURN}, {"true", my_enums::TRUE}, {"false", my_enums::FALSE}, {"null", my_enums::NULLSPECIAL}, {"this", my_enums::THIS}};
 
     myFile.open(fileName);
@@ -12,7 +13,10 @@ JackTokenizer::JackTokenizer(string fileName) {
         cout << "Can't Open File!" << endl;
     } 
 
-    
+    lookForwardFile.open(fileName);
+    if(!lookForwardFile.is_open()) {
+        cout << "Can't open look forward file" << endl;
+    }
 }
 
 
@@ -58,6 +62,8 @@ bool JackTokenizer::hasMoreTokens() {
     return false;
 }
 
+
+
 void JackTokenizer::advance() {
     if(isalnum(currentToken[0])) {
         while(isalnum(myFile.peek())) {
@@ -71,6 +77,16 @@ void JackTokenizer::advance() {
 
     } 
 }
+
+/*
+void JackTokenizer::advancePeek() {
+    int ungetter = 0;
+    currentLookForwardToken = currentToken;
+    if(isalnum(currentToken[0])) {
+
+    }
+}
+*/
 
 my_enums::tokenType JackTokenizer::tokenType() {
     if(currentToken[0] == '\"') {
