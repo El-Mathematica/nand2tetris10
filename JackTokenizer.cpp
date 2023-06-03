@@ -13,14 +13,57 @@ JackTokenizer::JackTokenizer(string fileName) {
         cout << "Can't Open File!" << endl;
     } 
 
-    lookForwardFile.open(fileName);
-    if(!lookForwardFile.is_open()) {
-        cout << "Can't open look forward file" << endl;
-    }
+    
 }
 
 
 bool JackTokenizer::hasMoreTokens() {
+    int getCount = 1;
+    char c = myFile.get();
+    while(!myFile.eof()) {
+        if(isspace(c)) {
+            c = myFile.get();
+            getCount++;
+            continue;
+        } else if(c == '/') {
+            char d = myFile.get();
+            getCount++;
+
+            if(d == '/') {
+                while(!myFile.eof() && c != '\n') {
+                    c = myFile.get();
+                    getCount++;
+                }
+                
+            }
+
+            if(d == '*') {
+                c = myFile.get();
+                d = myFile.get();
+                getCount+=2;
+                while(!myFile.eof() && (c != '*' || d != '/')) {
+                    c = d;
+                    d = myFile.get();
+                    getCount++;
+                }
+
+            }  else {
+                for(int i = 0; i < getCount; i++) myFile.unget();
+                return true;
+            }
+            
+        } else {
+            for(int i = 0; i < getCount; i++) myFile.unget();
+            return true;
+        } 
+    }
+    for(int i = 0; i < getCount; i++) myFile.unget();
+    return false;
+}
+
+
+
+void JackTokenizer::advance() {
     currentToken = "";
     char c = myFile.get();
     while(!myFile.eof()) {
@@ -28,43 +71,32 @@ bool JackTokenizer::hasMoreTokens() {
             c = myFile.get();
             continue;
         } else if(c == '/') {
-            char next = myFile.peek();
-
-            if(next == '/') {
-                c = myFile.get();
+            char d = myFile.get();
+            if(d == '/') {
                 while(!myFile.eof() && c != '\n') {
                     c = myFile.get();
                 }
+                
 
-            } else if(next == '*') {
+            } else if(d == '*') {
                 c = myFile.get();
-                
-                while(!myFile.eof() && (c != '*' || myFile.peek() != '/')) {
-                    c = myFile.get();
+                d = myFile.get();
+
+                while(!myFile.eof() && (c != '*' || d != '/')) {
+                    c = d;
+                    d = myFile.get();
                 }
-                c = (char)myFile.get();
-                c = (char)myFile.get();
-
                 
-            } else {
-                currentToken.push_back(c);
+                c = myFile.get();
 
-                return true;
+            }  else {
+                break;
             }
-            
         } else {
-            currentToken.push_back(c);
-
-            return true;
+            break;
         }
-        
     }
-    return false;
-}
-
-
-
-void JackTokenizer::advance() {
+    currentToken.push_back(c);
     if(isalnum(currentToken[0])) {
         while(isalnum(myFile.peek())) {
             currentToken.push_back(myFile.get());

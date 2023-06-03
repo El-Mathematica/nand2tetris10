@@ -32,9 +32,13 @@ int main(int argc, char **argv) {
         string base_filename = s.substr(s.find_last_of("/\\") + 1);
         base_filename = base_filename.substr(0, base_filename.find("."));
 
-        
+        ofstream outputFile;
+        outputFile.open(base_filename + "T.xml");
+        JackTokenizer tokens(s);
+        jackTokenizeOutput(outputFile, tokens);
 
-        CompilationEngine compiled = CompilationEngine(s, base_filename+".xml");
+
+        //CompilationEngine compiled = CompilationEngine(s, base_filename+".xml");
         
     }
         return 0;
