@@ -21,13 +21,14 @@ int main(int argc, char **argv) {
             string base_filename = s.substr(s.find_last_of("/\\") + 1);
             if(base_filename.find(".jack") != string::npos) {
                 files.insert(files.begin(), s);
+
             }
             
         }
     }
+
     for(string s : files) {
 
-    
 
         string base_filename = s.substr(s.find_last_of("/\\") + 1);
         base_filename = base_filename.substr(0, base_filename.find("."));
