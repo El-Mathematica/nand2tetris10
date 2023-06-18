@@ -404,6 +404,15 @@ void CompilationEngine::CompileExpression() {
 
     
 
+    CompileTerm();
+
+    indentValue--;
+    outputFile << indents() << "</expression>" << endl;
+    
+    
+}
+
+void CompilationEngine::CompileTerm() {
     outputFile << indents() << "<term>" << endl;
     indentValue++;
 
@@ -420,15 +429,6 @@ void CompilationEngine::CompileExpression() {
 
     indentValue--;
     outputFile << indents() << "</term>" << endl;
-
-    indentValue--;
-    outputFile << indents() << "</expression>" << endl;
-    
-    
-}
-
-void CompilationEngine::CompileTerm() {
-
 }
 
 void CompilationEngine::CompileExpressionList() {
