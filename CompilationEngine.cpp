@@ -314,6 +314,18 @@ void CompilationEngine::compileWhile() {
     outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
     tokens->advance();
 
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+    tokens->advance();
+    CompileExpression();
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+    tokens->advance();
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+    tokens->advance();
+    compileStatements();
+    outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+    tokens->advance();
+
+
     indentValue--;
     outputFile << indents() << "</whileStatement>" << endl;
 }
