@@ -54,7 +54,7 @@ void jackTokenizeOutput(ofstream& outputFile, JackTokenizer& tokens) { //initial
         if(tokens.tokenType() == my_enums::tokenType::STRING_CONST) {
             outputFile << "<stringConstant> " << tokens.stringVal() << " </stringConstant>" << endl;
         } else if(tokens.tokenType() == my_enums::tokenType::INT_CONST) {
-            outputFile << "<integerConstant> " << tokens.intVal() << " </integerConstant>" << endl;
+            outputFile << "<integerConstant> " << tokens.identifier() << " </integerConstant>" << endl;
         } else if(tokens.tokenType() == my_enums::tokenType::KEYWORD) {
             outputFile << "<keyword> " << tokens.stringKeyWord() << " </keyword>" << endl;
         } else if(tokens.tokenType() == my_enums::tokenType::IDENTIFIER) {

@@ -382,30 +382,45 @@ void CompilationEngine::compileIf() {
         outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
         tokens->advance();
     }
-    //cout << tokens->stringKeyWord() << endl;
+
     
     indentValue--;
     outputFile << indents() << "</ifStatement>" << endl;
 }
 
 void CompilationEngine::CompileExpression() {
-
     outputFile << indents() << "<expression>" << endl;
     indentValue++;
 
     
 
-    if(tokens->tokenType() == my_enums::tokenType::SYMBOL) {
+    if(tokens->symbol() == ')') {
         tokens->advance();
         indentValue--;
         outputFile << indents() << "</expression>" << endl;
         return;
     }
 
-    
-
     CompileTerm();
-
+    
+    
+    while(tokens->symbol() == '+' | tokens->symbol() == '-' | tokens->symbol() == '*' | tokens->symbol() == '/' | tokens->symbol() == '&' | tokens->symbol() == '|' | tokens->symbol() == '<' | tokens->symbol() == '>' | tokens->symbol() == '=') {
+        if(tokens->symbol() == '<') {
+                outputFile << indents() << "<symbol> " << "&lt;" << " </symbol>" << endl;
+        } else if(tokens->symbol() == '>') {
+                outputFile << indents() << "<symbol> " << "&gt;" << " </symbol>" << endl;
+        } else if(tokens->symbol() == '\"') {
+                outputFile << indents() << "<symbol> " << "&quot;" << " </symbol>" << endl;
+        } else if(tokens->symbol() == '&') {
+                outputFile << indents() << "<symbol> " << "&amp;" << " </symbol>" << endl;
+        } else {
+                outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        }
+        tokens->advance();
+        CompileTerm();
+    }
+    
+    
     indentValue--;
     outputFile << indents() << "</expression>" << endl;
     
@@ -416,17 +431,59 @@ void CompilationEngine::CompileTerm() {
     outputFile << indents() << "<term>" << endl;
     indentValue++;
 
-
-    if(tokens->tokenType() == my_enums::tokenType::KEYWORD) {
+    if(tokens->tokenType() == my_enums::tokenType::INT_CONST) {
+        outputFile << indents() << "<integerConstant> " << tokens->identifier() << " </integerConstant>" << endl;
+    } else if(tokens->tokenType() == my_enums::tokenType::STRING_CONST) {
+        outputFile << indents() << "<stringConstant> " << tokens->stringVal() << " </stringConstant>" << endl;
+    } else if(tokens->stringKeyWord()=="true"|tokens->stringKeyWord()=="false"|tokens->stringKeyWord()=="null"|tokens->stringKeyWord()=="this") {
         outputFile << indents() << "<keyword> " << tokens->stringKeyWord() << " </keyword>" << endl;
+    } else if(tokens->symbol()=='-'|tokens->symbol()=='~') {
+        outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        tokens->advance();
+        CompileTerm();
+
+        indentValue--;
+        outputFile << indents() << "</term>" << endl;
+        return;
+    } else if(tokens->symbol()=='(') {
+        outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        tokens->advance();
+        CompileExpression();
+        outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+
     } else {
+        //either varname, varname[], subroutine(), identifier.subroutine()
         outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+        tokens->advance();
+        if(tokens->symbol() == '[') {
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+            tokens->advance();
+            CompileExpression();
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        } else if(tokens->symbol() == '(') {
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+            tokens->advance();
+            CompileExpressionList();
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        } else if(tokens->symbol() == '.') {
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+            tokens->advance();
+            outputFile << indents() << "<identifier> " << tokens->identifier() << " </identifier>" << endl;
+            tokens->advance();
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+            tokens->advance();
+            CompileExpressionList();
+            outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
+        } else {
+            indentValue--;
+            outputFile << indents() << "</term>" << endl;
+            return;
+        }
     }
     
 
 
     tokens->advance(); // check for token out of expression
-
     indentValue--;
     outputFile << indents() << "</term>" << endl;
 }
@@ -435,14 +492,13 @@ void CompilationEngine::CompileExpressionList() {
     outputFile << indents() << "<expressionList>" << endl;
     indentValue++;
     
-    
-    
+
     while(tokens->stringKeyWord() != ")") {
-        
         if(tokens->stringKeyWord() == ",") {
             outputFile << indents() << "<symbol> " << tokens->symbol() << " </symbol>" << endl;
             tokens->advance();
         }
+        
         CompileExpression();
 
     }
