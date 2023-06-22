@@ -15,7 +15,7 @@ class JackTokenizer {
         string currentToken;
         string currentLookForwardToken;
         ifstream myFile;
-        ifstream lookForwardFile;
+
         unordered_map<string, my_enums::keyWord> tokenMap;
     public:
         JackTokenizer(string fileName);

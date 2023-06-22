@@ -21,18 +21,25 @@ int main(int argc, char **argv) {
             string base_filename = s.substr(s.find_last_of("/\\") + 1);
             if(base_filename.find(".jack") != string::npos) {
                 files.insert(files.begin(), s);
+
             }
             
         }
     }
+
     for(string s : files) {
 
-    
 
         string base_filename = s.substr(s.find_last_of("/\\") + 1);
         base_filename = base_filename.substr(0, base_filename.find("."));
 
-        
+        /*
+
+        ofstream outputFile;
+        outputFile.open(base_filename + "T.xml");
+        JackTokenizer tokens(s);
+        jackTokenizeOutput(outputFile, tokens);
+        */
 
         CompilationEngine compiled = CompilationEngine(s, base_filename+".xml");
         
@@ -47,7 +54,7 @@ void jackTokenizeOutput(ofstream& outputFile, JackTokenizer& tokens) { //initial
         if(tokens.tokenType() == my_enums::tokenType::STRING_CONST) {
             outputFile << "<stringConstant> " << tokens.stringVal() << " </stringConstant>" << endl;
         } else if(tokens.tokenType() == my_enums::tokenType::INT_CONST) {
-            outputFile << "<integerConstant> " << tokens.intVal() << " </integerConstant>" << endl;
+            outputFile << "<integerConstant> " << tokens.identifier() << " </integerConstant>" << endl;
         } else if(tokens.tokenType() == my_enums::tokenType::KEYWORD) {
             outputFile << "<keyword> " << tokens.stringKeyWord() << " </keyword>" << endl;
         } else if(tokens.tokenType() == my_enums::tokenType::IDENTIFIER) {
